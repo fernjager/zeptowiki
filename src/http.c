@@ -508,10 +508,6 @@ http_response_send(HttpResponse *res)
     {
       int n_bytes = res->data_len;
       
-      /* Dont send '\0' in response */
-      if (res->data[n_bytes-1] == '\0') 
-        n_bytes--;
-
       fwrite(res->data, 1, n_bytes, stdout);
     }
 }
