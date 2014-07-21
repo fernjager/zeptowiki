@@ -71,8 +71,8 @@
 "<div id='header'>\n"                                                    \
 "<table border='0' width='100%%'>\n"                                      \
 "<tr>\n"                                                                 \
-"<td align='left' > =H1 ==H2 ===H3 | *bold* | /italic/ | _underscore_ | -strikethrough- | +highlight+ | 'quote | "\
-"[link] | * list | ** sublist | # ordered | ---- | {{toc}} | {{private}}</td>\n"\
+"<td align='left' > | # H1 # | ## H2 ## | ### H3 ### | **bold** | *italic* | ~~strikethrough~~ | (four spaces)quote | "\
+"[example](http://url.com/) | * list1 | + list2 | - list 3 | </td>\n"\
 "</tr>\n"                                                           \
 "</table>\n"                                                             \
 "</div>\n"                                                               \
@@ -82,7 +82,7 @@
 #define LOGINFORM                                                       \
                                                                         \
 "<h1>Login</h1>"                                                        \
-"<p><a href='NewAccount'>New user? Please create a new account.</a></p>\n" \
+"<p></p>\n" \
 "<form method=POST action='Login'>\n"                                  \
 "<table border='0' width='100%%'>\n"                                      \
 "<tr>\n"                                                                 \

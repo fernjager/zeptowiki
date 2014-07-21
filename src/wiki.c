@@ -141,9 +141,7 @@ wiki_show_page(HttpResponse *res, char *wikitext, char *page, int autorized)
 
   wiki_show_header(res, page, TRUE, autorized);
 
-  html_clean_wikitext = util_htmlize(wikitext, strlen(wikitext));
-
-  private=wiki_print_data_as_html(res, html_clean_wikitext, autorized, page);      
+  private=wiki_print_data_as_html(res, wikitext, autorized, page);      
 
   wiki_show_footer(res);  
 
@@ -170,9 +168,7 @@ wiki_show_edit_page(HttpResponse *res, char *wikitext, char *page,
     http_response_printf(res, EDITPREVIEW);
     http_response_printf_alloc_buffer(res, strlen(wikitext)*2);
 
-    html_clean_wikitext = util_htmlize(wikitext, strlen(wikitext));
-
-    wiki_print_data_as_html(res, html_clean_wikitext, autorized, page);
+    wiki_print_data_as_html(res, wikitext, autorized, page);
   }
 
   wiki_show_footer(res);
