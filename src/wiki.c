@@ -484,6 +484,26 @@ wiki_show_footer(HttpResponse *res)
      );
 }
 
+int page_name_is_good(char* page_name)
+{
+/* We should give access only to subdirs of didiwiki root.
+   I guess that check for absense of '/' is enough.
+
+   TODO: Use realpath()
+*/
+    if (!page_name)
+        return FALSE;
+
+    if (!isalnum(page_name[0]))
+        return FALSE;
+
+    if (strstr(page_name, ".."))
+        return FALSE;
+
+    return TRUE;
+}
+
+
 void
 wiki_handle_rest_call(HttpRequest  *req, 
               HttpResponse *res,
@@ -498,7 +518,7 @@ wiki_handle_rest_call(HttpRequest  *req,
       if (page == NULL)
         page = http_request_get_query_string(req);
 
-      if (page && (access(page, R_OK) == 0)) 
+      if (page && page_name_is_good(page) && (access(page, R_OK) == 0)) 
       {
         http_response_printf(res, "%s", file_read(page));
         http_response_send(res);
@@ -511,12 +531,14 @@ wiki_handle_rest_call(HttpRequest  *req,
       if( ( (wikitext = http_request_param_get(req, "text")) != NULL)
           && ( (page = http_request_param_get(req, "page")) != NULL))
       {
-        file_write(page, wikitext);
-        /* log modified page name and IP address */
-        syslog(LOG_LOCAL0|LOG_INFO, "page %s modified from %s", page ,http_request_get_ip_src(req));
-        http_response_printf(res, "success");
-        http_response_send(res);
-        return;
+          if (page_name_is_good(page))
+            {        file_write(page, wikitext);
+          /* log modified page name and IP address */
+                syslog(LOG_LOCAL0|LOG_INFO, "page %s modified from %s", page ,http_request_get_ip_src(req));
+                http_response_printf(res, "success");
+                http_response_send(res);
+                return;
+            }
       }
     }
     else if (!strcmp(func, "page/delete"))
@@ -526,7 +548,7 @@ wiki_handle_rest_call(HttpRequest  *req,
       if (page == NULL)
         page = http_request_get_query_string(req);
 
-      if (page && (unlink(page) > 0))
+      if (page && page_name_is_good(page) && (unlink(page) > 0))
       {
         http_response_printf(res, "success");
         http_response_send(res);
@@ -540,7 +562,7 @@ wiki_handle_rest_call(HttpRequest  *req,
       if (page == NULL)
         page = http_request_get_query_string(req);
 
-      if (page && (access(page, R_OK) == 0)) 
+      if (page && page_name_is_good(page) && (access(page, R_OK) == 0)) 
         {
           http_response_printf(res, "success");
           http_response_send(res);
@@ -673,7 +695,7 @@ wiki_handle_http_request(HttpRequest *req)
   /* A little safety. issue a malformed request for any paths,
    * There shouldn't need to be any..
    */
-  if (strchr(page, '/'))
+  if (!page_name_is_good(page))
   {
     http_response_set_status(res, 404, "Not Found");
     http_response_printf(res, "<html><body>404 Not Found</body></html>\n");
